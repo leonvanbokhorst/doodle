@@ -165,6 +165,3 @@ class ArxivServer:
             await self.server.run(
                 read_stream, write_stream, self.server.create_initialization_options()
             )
-
-
-# No need for main() here as it's in __init__.py
