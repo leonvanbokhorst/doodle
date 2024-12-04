@@ -26,7 +26,6 @@ cached_results = {}
 
 class ArxivServer:
     def __init__(self):
-        # Server just wants a name - that's it!
         self.server = Server(name="arxiv-server")
 
         self.client = arxiv.Client()
