@@ -187,6 +187,10 @@ class ColabradoodleServer:
                 return await self._give_treat(arguments["treat_type"])
             elif name == "check_status":
                 return await self._check_status()
+            elif name == "train_trick":
+                return await self._train_trick(arguments["trick"])
+            elif name == "go_for_walk":
+                return await self._go_for_walk(arguments["location"], arguments["duration"])
 
             raise ValueError(f"Unknown tool: {name}")
 
