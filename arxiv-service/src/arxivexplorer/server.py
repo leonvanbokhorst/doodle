@@ -55,14 +55,16 @@ class ArxivServer:
             # Get results synchronously since arxiv.Client.results() returns an iterator
             results = []
             for paper in self.client.results(search):
-                results.append({
-                    "title": paper.title,
-                    "summary": paper.summary,
-                    "authors": [author.name for author in paper.authors],
-                    "published": paper.published.isoformat(),
-                    "url": paper.pdf_url,
-                    "categories": paper.categories,
-                })
+                results.append(
+                    {
+                        "title": paper.title,
+                        "summary": paper.summary,
+                        "authors": [author.name for author in paper.authors],
+                        "published": paper.published.isoformat(),
+                        "url": paper.pdf_url,
+                        "categories": paper.categories,
+                    }
+                )
                 if len(results) >= max_results:
                     break
 

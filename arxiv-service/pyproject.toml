@@ -2,7 +2,7 @@
 name = "arxivexplorer"
 version = "0.1.0"
 description = "ArXiv Explorer MCP Server"
-requires-python = ">=3.10"  # Changed to match MCP requirements
+requires-python = ">=3.10"  
 dependencies = [
     "arxiv",
     "feedparser",
