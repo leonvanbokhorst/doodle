@@ -1,0 +1,10 @@
+[project]
+name = "doodle"
+version = "0.1.0"
+dependencies = [
+    "mcp",
+    "httpx",
+]
+
+[project.scripts]
+doodle = "doodle.server:main"
