@@ -1,6 +1,6 @@
-# doodle MCP server
+# ArxivExplorer MCP server
 
-a friendly dog that barks. He's a good boy. Atta girl!
+An MCP Server that explores relavant papers based on the users interest.
 
 ## Components
 
@@ -41,13 +41,13 @@ On Windows: `%APPDATA%/Claude/claude_desktop_config.json`
   <summary>Development/Unpublished Servers Configuration</summary>
   ```
   "mcpServers": {
-    "doodle": {
+    "ArxivExplorer": {
       "command": "uv",
       "args": [
         "--directory",
-        "/Users/leonvanbokhorst/repos/mcp_doodle/doodle",
+        "/Users/leonvanbokhorst/repos/mcp_doodle/doodle/arxiv-service",
         "run",
-        "doodle"
+        "ArxivExplorer"
       ]
     }
   }
@@ -58,10 +58,10 @@ On Windows: `%APPDATA%/Claude/claude_desktop_config.json`
   <summary>Published Servers Configuration</summary>
   ```
   "mcpServers": {
-    "doodle": {
+    "ArxivExplorer": {
       "command": "uvx",
       "args": [
-        "doodle"
+        "ArxivExplorer"
       ]
     }
   }
@@ -104,7 +104,7 @@ experience, we strongly recommend using the [MCP Inspector](https://github.com/m
 You can launch the MCP Inspector via [`npm`](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) with this command:
 
 ```bash
-npx @modelcontextprotocol/inspector uv --directory /Users/leonvanbokhorst/repos/mcp_doodle/doodle run doodle
+npx @modelcontextprotocol/inspector uv --directory /Users/leonvanbokhorst/repos/mcp_doodle/doodle/arxiv-service run arxivexplorer
 ```
 
 
