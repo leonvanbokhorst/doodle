@@ -1,0 +1,4 @@
+neo4j
+networkx
+numpy
+mcp-core  # Assuming this is the correct package name for MCP 
