@@ -34,44 +34,47 @@ class ArxivServer:
         self.client = arxiv.Client(
             page_size=100,
             delay_seconds=3,  # Ensure we don't hit rate limits
-            num_retries=3
+            num_retries=3,
         )
-        
+
         # Initialize ChromaDB
         self.chroma_client = chromadb.Client(Settings(persist_directory="./data"))
-        self.collection = self.chroma_client.get_or_create_collection(name="arxiv_papers")
-        
+        self.collection = self.chroma_client.get_or_create_collection(
+            name="arxiv_papers"
+        )
+
         self.setup_handlers()
 
     async def store_paper(self, paper_data: dict) -> bool:
         try:
             # Generate paper ID
             paper_id = f"paper_{hash(paper_data['url'])}"
-            
+
             # Check if paper already exists
             try:
-                existing = self.collection.get(
-                    ids=[paper_id],
-                    include=['metadatas']
-                )
-                if existing and existing['ids']:
-                    logger.info(f"Paper already exists in vector store: {paper_data['title']}")
+                existing = self.collection.get(ids=[paper_id], include=["metadatas"])
+                if existing and existing["ids"]:
+                    logger.info(
+                        f"Paper already exists in vector store: {paper_data['title']}"
+                    )
                     return True
             except Exception as e:
                 logger.debug(f"Error checking for existing paper: {str(e)}")
                 # Continue with storage attempt if check fails
-                
+
             # Store the paper in the vector store
             self.collection.add(
                 documents=[paper_data["summary"]],
-                metadatas=[{
-                    "title": paper_data["title"],
-                    "url": paper_data["url"],
-                    "authors": ", ".join(paper_data["authors"]),
-                    "published": paper_data["published"],
-                    "categories": ", ".join(paper_data["categories"])
-                }],
-                ids=[paper_id]
+                metadatas=[
+                    {
+                        "title": paper_data["title"],
+                        "url": paper_data["url"],
+                        "authors": ", ".join(paper_data["authors"]),
+                        "published": paper_data["published"],
+                        "categories": ", ".join(paper_data["categories"]),
+                    }
+                ],
+                ids=[paper_id],
             )
             logger.info(f"Successfully stored new paper: {paper_data['title']}")
             return True
@@ -89,7 +92,7 @@ class ArxivServer:
         logger.info("Creating arXiv search with parameters:")
         logger.info("  Query: %r", query)
         logger.info("  Max results: %d", max_results)
-        
+
         search = arxiv.Search(
             query=query,
             max_results=max_results,
@@ -100,17 +103,19 @@ class ArxivServer:
             results = []
             async_results = self.client.results(search)
             logger.info("Got results from arXiv API, processing...")
-            
+
             for paper in async_results:
                 logger.debug("Processing paper: %s", paper.title)
-                results.append({
-                    "title": paper.title,
-                    "summary": paper.summary,
-                    "authors": [author.name for author in paper.authors],
-                    "published": paper.published.isoformat(),
-                    "url": paper.pdf_url,
-                    "categories": paper.categories,
-                })
+                results.append(
+                    {
+                        "title": paper.title,
+                        "summary": paper.summary,
+                        "authors": [author.name for author in paper.authors],
+                        "published": paper.published.isoformat(),
+                        "url": paper.pdf_url,
+                        "categories": paper.categories,
+                    }
+                )
                 if len(results) >= max_results:
                     break
 
@@ -126,8 +131,7 @@ class ArxivServer:
         logger.info(f"Fetching paper by ID: {paper_id}")
         try:
             search = arxiv.Search(id_list=[paper_id])
-            results = list(self.client.results(search))
-            if results:
+            if results := list(self.client.results(search)):
                 paper = results[0]
                 return {
                     "title": paper.title,
@@ -199,7 +203,7 @@ class ArxivServer:
                         },
                         "required": ["approval_token"],
                     },
-                )
+                ),
             ]
 
         @self.server.call_tool()
@@ -225,15 +229,15 @@ class ArxivServer:
                             text=f"Error searching papers: {str(e)}",
                         )
                     ]
-            
+
             elif name == "request_paper_storage":
                 paper_url = arguments["paper_url"]
                 # Extract arxiv ID from URL
-                paper_id = paper_url.split('/')[-1].replace('.pdf', '')
-                
+                paper_id = paper_url.split("/")[-1].replace(".pdf", "")
+
                 # Try to fetch the paper directly
                 paper_data = await self.fetch_paper_by_id(paper_id)
-                
+
                 if paper_data:
                     approval_token = await self.request_paper_storage(paper_data)
                     return [
@@ -265,11 +269,14 @@ class ArxivServer:
                 return [
                     TextContent(
                         type="text",
-                        text="Paper successfully stored in the vector database" if success
-                        else "Failed to store paper in the vector database",
+                        text=(
+                            "Paper successfully stored in the vector database"
+                            if success
+                            else "Failed to store paper in the vector database"
+                        ),
                     )
                 ]
-            
+
             else:
                 raise ValueError(f"Unknown tool: {name}")
 
